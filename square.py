@@ -2,6 +2,7 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import colors
+
 class Square:
     def __init__(self,center_point,width,height, equation):
         self.x = center_point[0]
@@ -14,17 +15,17 @@ class Square:
         self.render_flag = True
         self.color = colors.red
         self.answer = eval(equation[:-1])
-        print(self.equation)
-        print(self.answer)
     def render_text(self):
         if(self.check_bounds()):
             glColor3f(*colors.white)
             glRasterPos2d(self.text_point_x,self.text_point_y)
             for c in self.equation:
                 glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, ord(c))
-            glFlush()
-    def validate_answer(answer):
+            #bug fixed by commenting this out
+            # glFlush()
+    def validate_answer(self,answer):
         if(answer == self.answer):
+            print("4atteeeer!")
             self.color = colors.green
             return True
         return False

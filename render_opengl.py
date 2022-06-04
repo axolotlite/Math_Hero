@@ -32,7 +32,7 @@ def iterate():
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
     glClearColor(0,0,0,0.0)
-    glOrtho(0.0, width, 0.0, height, 0.0, 1.0)
+    gluOrtho2D(0.0, width, 0.0, height)
     glMatrixMode (GL_MODELVIEW)
     glLoadIdentity()
     
@@ -51,7 +51,12 @@ def render_rung():
     glVertex2f(center_x + rung_thickness, height)
     glVertex2f(center_x - rung_thickness, height)
     glEnd()
+    
 def render_rung_squares():
     for square in rung:
         square.render()
         square.render_text()
+        #once it gets out of bound
+        if not square.check_bounds():
+            print('removing square')
+            rung.remove(square)
