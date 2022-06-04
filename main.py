@@ -1,25 +1,46 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-
+import cv2
 import scorer
 import difficulty
 import render_opengl
 from square import Square
 
 starting_point_y = -10
-square_spawn_timer = 1000
-square_speed = 15
-
+square_spawn_timer = 2000
+square_speed = 10
+game_time_limit = 60
+power_up_time_limit = 15
+power_up_flag = False
+is_game_over = False
 ans = ""
 current_game_score = 0
+
+score_square = Square([0.05*render_opengl.width,0.96*render_opengl.height], 30,20,"0 ")
+timer_square = Square([0.95*render_opengl.width,0.96*render_opengl.height], 30,20,"60 ")
+img = cv2.imread("abdo_stare.png", cv2.IMREAD_COLOR)
 #this isn't working
 def generate_square():
     render_opengl.rung.append(Square([render_opengl.center_y, starting_point_y], 40, 20,difficulty.generate_linear_equation(2)[2]))
 def generate_square_timer(value):
     glutTimerFunc(square_spawn_timer,generate_square_timer,value)
     generate_square()
+def update_time(value):
+    global power_up_time_limit, game_time_limit, power_up_flag, is_game_over
     
+    if(power_up_time_limit <= 0):
+        power_up_time_limit = 15
+        power_up_flag = False
+    if(game_time_limit <= 0):
+        game_time_limit = 60
+        is_game_over = True
+    if(not power_up_flag):
+        glutTimerFunc(1000,update_time,value)
+        game_time_limit -= 1
+    else:
+        glutTimerFunc(1000,update_time,value)
+        power_up_time_limit -= 1
 def rung_rectangles_update(value):
     glutTimerFunc(square_speed,rung_rectangles_update,value)
     # test_square.update(global_x_offset_increment)
@@ -27,7 +48,6 @@ def rung_rectangles_update(value):
         square.update(render_opengl.global_y_offset_increment)
         square.render
     glutPostRedisplay()
-    
 def showScreen():
     # render_opengl.init_points()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -36,10 +56,17 @@ def showScreen():
     glColor3f(1.0, 0.0, 3.0)
     render_opengl.render_rung()
     render_opengl.render_rung_squares()
+    score_square.equation = str(current_game_score)
+    score_square.render()
+    score_square.render_text()
+    
+    timer_square.equation = str(game_time_limit)
+    timer_square.render()
+    timer_square.render_text()
     # test_square.render()
     # test_square.render_text()
     glutSwapBuffers()
-    
+
 #useless in this object
 def validate_solutions(solution):
     global current_game_score
@@ -102,13 +129,14 @@ def render_window():
     glutInitDisplayMode(GLUT_RGBA)
     glutInitWindowSize(render_opengl.width, render_opengl.height)
     glutInitWindowPosition(0, 0)
-    wind = glutCreateWindow("OpenGL Coding Practice")
+    glutCreateWindow("OpenGL Coding Practice")
     glutDisplayFunc(showScreen)
     glutIdleFunc(showScreen)
     glutKeyboardFunc(NumKeyboard)
     # glutSpecialFunc(specialKey)
     rung_rectangles_update(0)
     generate_square_timer(0)
+    update_time(0)
     glutMainLoop()
     
 

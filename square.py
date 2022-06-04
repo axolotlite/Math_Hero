@@ -29,7 +29,6 @@ class Square:
             self.color = colors.green
             return True
         return False
-    
     def check_bounds(self):
         if(self.y - self.half_height - 5 > glutGet(GLUT_WINDOW_HEIGHT)):
             return False
