@@ -6,7 +6,7 @@ def hello():
 highscores_dict = {}
    
 def writeHighscore():
-    highscores = open("highscores_test.txt",'w')
+    highscores = open("highscores.txt",'w')
     for username in highscores_dict:
         #creates a string seperating each array element with a comma
         scores = ','.join(highscores_dict[username])

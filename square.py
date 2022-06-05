@@ -13,7 +13,7 @@ class Square:
         self.text_point_x =  center_point[0]  - 0.5 * width - 2.4*len(equation)
         self.text_point_y =  center_point[1] - 0.5 * height
         self.equation = equation
-        
+        self.solved = False
         self.color = colors.red
         
     def render_text(self):
@@ -25,11 +25,13 @@ class Square:
             #bug fixed by commenting this out
             # glFlush()
     def validate_answer(self,answer):
-        self.answer = eval(self.equation[:-1])
-        if(answer == self.answer):
-            print("4atteeeer!")
-            self.color = colors.green
-            return True
+        if(not self.solved):
+            self.answer = eval(self.equation[:-1])
+            if(answer == self.answer):
+                self.solved = True
+                print("4atteeeer!")
+                self.color = colors.green
+                return True
         return False
     def check_bounds(self):
         if(self.y - self.half_height - 5 > glutGet(GLUT_WINDOW_HEIGHT)):
@@ -68,6 +70,10 @@ class Square:
     def check_click(self, x, y):
         min_x,max_x = self.x - self.half_width, self.x + self.half_width
         min_y,max_y = self.y - self.half_height, self.y + self.half_height
+        print("X:")
+        print(min_x,x,max_x)
+        print("Y:")
+        print(min_y,y,max_y)
         if(min_x <= x <= max_x) and (min_y <= y <= max_y):
                 return True
         return False
@@ -134,6 +140,8 @@ class ImageSquare(Square):
         if(self.render_flag):
             min_x,max_x = self.x - self.half_width, self.x + self.half_width
             min_y,max_y = self.y - self.half_height, self.y + self.half_height
+            print("X:")
+            print(min_x,x,max_x)
             if(min_x <= x <= max_x) and (min_y <= y <= max_y):
                 return True
         return False

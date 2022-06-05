@@ -74,6 +74,8 @@ def init_points():
     if((new_height != height) or (new_width != width)):
         scale_factor_x = new_width/width
         scale_factor_y = new_height/height
+        print(new_width)
+        print(new_height)
         width = new_width
         height = new_height
         center_x = width/2
@@ -100,10 +102,12 @@ def render_rung_squares():
         if not square.check_bounds():
             # print('removing square')
             rung.remove(square)
+#game variables
 starting_point_y = -10
 square_spawn_timer = 2000
 abdo_glide_speed = 30
 square_speed = 10
+#resetable
 game_time_limit = 60
 power_up_time_limit = 15
 abdo_appearance_time = random.randint(20,50)
@@ -116,17 +120,32 @@ score_square = Square([0.05*width,0.96*height], 30,20,"0 ")
 timer_square = Square([0.95*width,0.96*height], 30,20,"60 ")
 abdo_square = ImageSquare([center_x + 20,center_y - 40],40,40,"abdo_stare.png")
 
+def reset_game_parameters():
+    global rung, game_time_limit, power_up_time_limit, abdo_appearance_time, power_up_flag, is_game_over, ans, current_game_score
+    rung.clear()
+    game_time_limit = 60
+    power_up_time_limit = 15
+    abdo_appearance_time = random.randint(20,50)
+    abdo_square.render_flag = False
+    power_up_flag = False
+    is_game_over = False
+    ans = ""
+    current_game_score = 0
+    playing = True
 #this isn't working
 def generate_square():
     rung.append(Square([center_x, starting_point_y], 40, 20,difficulty.generate_linear_equation(2)[2]))
 def generate_square_timer(value):
+    
     glutTimerFunc(square_spawn_timer,generate_square_timer,value)
     generate_square()
 def abdo_glide_timer(value):
+    
     glutTimerFunc(abdo_glide_speed,abdo_glide_timer,value)
     abdo_square.update(width, height)
 def update_time(value):
     global power_up_time_limit, game_time_limit, power_up_flag, is_game_over, score_increment,page
+    
     if(abdo_appearance_time == game_time_limit):
         abdo_square.toggle_render_flag()
     if(power_up_time_limit <= 0):
@@ -137,16 +156,17 @@ def update_time(value):
         is_game_over = True
         page=4
     if(not power_up_flag):
-        print("normal time")
+        # print("normal time")
         score_increment = 1
         glutTimerFunc(1000,update_time,value)
         game_time_limit -= 1
     else:
-        print("Za Waruudoo")
+        # print("Za Waruudoo")
         score_increment = 2
         glutTimerFunc(1000,update_time,value)
         power_up_time_limit -= 1
 def rung_rectangles_update(value):
+    
     glutTimerFunc(square_speed,rung_rectangles_update,value)
     # test_square.update(global_x_offset_increment)
     for square in rung:
@@ -179,6 +199,7 @@ def showScreen():
     glLoadIdentity()
     iterate()
     resize_objects()
+    
     if (page==0):
         mainMenu()
 
@@ -193,9 +214,9 @@ def showScreen():
         timer_square.equation = str(game_time_limit)
         timer_square.render()
         timer_square.render_text()
+        drawText(20,45,"Answer: "+ans)
         abdo_square.display_image()
         abdo_square.render()
-        drawText(20,45,"Answer: "+ans)
     
     elif(page==4):
         scoreStr=score_square.equation
@@ -250,19 +271,11 @@ def NumKeyboard(key, x , y):
 def specialKey (key, x,y):
     global page
 
-    if (key==GLUT_KEY_UP):
-        alphaY+=5;
-    if (key==GLUT_KEY_DOWN):
-        alphaY-=5;
-    if (key==GLUT_KEY_RIGHT):
-        alphaX+=5;
-    if (key==GLUT_KEY_LEFT):
-        alphaX-=5;
-
-    #if(key== GLUT_KEY_F1):
-    #     # Restart
+    if(key== GLUT_KEY_F1):
+        reset_game_parameters()
 
     if(key== GLUT_KEY_F2):
+        reset_game_parameters()
         page=0
     
     glutPostRedisplay();
@@ -272,17 +285,14 @@ def click_abdo(btn,state,x,y):
     global power_up_flag,page
     mouseX,mouseY=0,0
     if(btn==GLUT_LEFT_BUTTON and state==GLUT_DOWN):
-        mouseX=x; mouseX= 0.5 + 1.0 *mouseX
-        mouseY=500-y; mouseY= 0.5 + 1.0 *mouseY *1
+        mouseX=x; mouseX= 0.5 + 1.0 *mouseX 
+        mouseY=height-y; mouseY= 0.5 + 1.0 *mouseY *1
     
         if(menuSquare[1].check_click(mouseX,mouseY)):
             page=1
             glutKeyboardFunc(NumKeyboard)
             glutSpecialFunc(specialKey)
-            rung_rectangles_update(0)
-            generate_square_timer(0)
-            abdo_glide_timer(0)
-            update_time(0)
+            reset_game_parameters()
 
         if(menuSquare[3].check_click(mouseX,mouseY)):
             glutDestroyWindow()
@@ -303,6 +313,10 @@ def render_window():
     wind=glutCreateWindow("OpenGL Coding Practice")
     glutDisplayFunc(showScreen)
     glutIdleFunc(showScreen)
+    rung_rectangles_update(0)
+    generate_square_timer(0)
+    abdo_glide_timer(0)
+    update_time(0)
     glutMouseFunc(click_abdo)
     
     
@@ -311,6 +325,7 @@ def render_window():
     
 
 def main():
+    
     render_window()
     
 
