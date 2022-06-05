@@ -97,25 +97,25 @@ class ImageSquare(Square):
             glEnd()
     def update(self, limitX, limitY):
         if(self.x >= limitX):
-            self.increment_x = -0.01*limitX
+            self.increment_x = -0.02*limitX
             if(choice([False,True])):
                 self.increment_x -= (self.increment_x)
             if(choice([False,True])):
                 self.increment_y = -(self.increment_y)
         if(self.x <= 0):
-            self.increment_x = +0.01*limitX
+            self.increment_x = +0.02*limitX
             if(choice([False,True])):
                 self.increment_x += (self.increment_x)
             if(choice([False,True])):
                 self.increment_y = -(self.increment_y)
         if(self.y >= limitY):
-            self.increment_y = -0.01*limitY
+            self.increment_y = -0.02*limitY
             if(choice([False,True])):
                 self.increment_y -= (self.increment_y)
             if(choice([False,True])):
                 self.increment_x = -(self.increment_x)
         if(self.y <= 0):
-            self.increment_y = +0.01*limitY
+            self.increment_y = +0.02*limitY
             if(choice([False,True])):
                 self.increment_y = -(self.increment_y)
             if(choice([False,True])):
@@ -123,10 +123,11 @@ class ImageSquare(Square):
         self.x += self.increment_x
         self.y += self.increment_y
     def check_collision(self, x, y):
-        min_x,max_x = self.x - self.half_width, self.x + self.half_width
-        min_y,max_y = self.y - self.half_height, self.y + self.half_height
-        if(min_x <= x <= max_x) and (min_y <= y <= max_y):
-            return True
+        if(self.render_flag):
+            min_x,max_x = self.x - self.half_width, self.x + self.half_width
+            min_y,max_y = self.y - self.half_height, self.y + self.half_height
+            if(min_x <= x <= max_x) and (min_y <= y <= max_y):
+                return True
         return False
         
         
