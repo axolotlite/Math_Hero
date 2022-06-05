@@ -15,7 +15,7 @@ class Square:
         self.equation = equation
         self.solved = False
         self.color = colors.red
-        
+        self.render_flag = False
     def render_text(self):
         if(self.check_bounds()):
             glColor3f(*colors.white)
@@ -55,6 +55,7 @@ class Square:
         self.text_point_y =  self.y  - 0.5 * self.half_height
     def render(self):
         if (self.check_bounds()):
+            # print("i am")
             glBegin(GL_QUADS)
             glColor3f(*self.color)
             glVertex2f(self.x - self.half_width, self.y - self.half_height)

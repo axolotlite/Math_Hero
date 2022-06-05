@@ -18,6 +18,7 @@ game_title = "Math Hero: Ascension"
 page=0
 # Change SPEED to make the game go faster
 playing = True
+write_flag = True
 SPEED = 10
 scale_factor_x = 1
 scale_factor_y = 1
@@ -31,7 +32,7 @@ global_y_offset_increment = 1
 center_x = int(width/2)
 center_y = int(height/2)
 
-score_increment = 1
+score_increment = 100
 
 
 menuSquare={}
@@ -47,7 +48,23 @@ menuSquare[0].color=colors.black
 # test_square = Square([center_x, center_y], 40, 20,"1+1+2=")
 
 rung = []
-
+highscore_square = []
+score_diplay_num = 5
+def init_scoreboard():
+    scorer.readHighscores()
+    high_scores = scorer.highscores_array[:score_diplay_num]
+    high_scores = high_scores[::-1]
+    highscore_square.append(Square([center_x,0.9*height], 0.1*width,0.2*height,"Highscores "))
+    highscore_square[-1].color = colors.black
+    print(high_scores)
+    i = 0
+    counter = 6
+    for score in high_scores:
+        i+=1
+        counter -= 1
+        highscore_square.append(Square([0.5*center_x,0.15*i*height], 0.1*width,0.2*height,str(counter) + ") " + str(score)))
+        highscore_square[-1].color = colors.black
+# init_scoreboard()
 def drawText(x,y,word):
     glColor3f(0,1,0)
     glRasterPos2d(x,y)
@@ -121,9 +138,10 @@ timer_square = Square([0.95*width,0.96*height], 30,20,"60 ")
 abdo_square = ImageSquare([center_x + 20,center_y - 40],40,40,"abdo_stare.png")
 
 def reset_game_parameters():
-    global rung, game_time_limit, power_up_time_limit, abdo_appearance_time, power_up_flag, is_game_over, ans, current_game_score
+    global rung, game_time_limit, power_up_time_limit, abdo_appearance_time, power_up_flag, is_game_over, ans, current_game_score, write_flag
+    write_flag = True
     rung.clear()
-    game_time_limit = 60
+    game_time_limit = 10
     power_up_time_limit = 15
     abdo_appearance_time = random.randint(20,50)
     abdo_square.render_flag = False
@@ -145,9 +163,10 @@ def abdo_glide_timer(value):
     abdo_square.update(width, height)
 def update_time(value):
     global power_up_time_limit, game_time_limit, power_up_flag, is_game_over, score_increment,page
-    
+    print(game_time_limit)
     if(abdo_appearance_time == game_time_limit):
-        abdo_square.toggle_render_flag()
+        print("godddamn it")
+        abdo_square.render_flag = True
     if(power_up_time_limit <= 0):
         power_up_time_limit = 15
         power_up_flag = False
@@ -157,7 +176,7 @@ def update_time(value):
         page=4
     if(not power_up_flag):
         # print("normal time")
-        score_increment = 1
+        score_increment = 100
         glutTimerFunc(1000,update_time,value)
         game_time_limit -= 1
     else:
@@ -193,7 +212,7 @@ def mainMenu():
 
 
 def showScreen():
-    global ans
+    global ans, write_flag
     # init_points()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
@@ -217,12 +236,23 @@ def showScreen():
         drawText(20,45,"Answer: "+ans)
         abdo_square.display_image()
         abdo_square.render()
-    
+    elif(page == 2):
+        for square in highscore_square:
+            # print('render deez')
+            square.render()
+            square.render_text()
+            
+        
     elif(page==4):
         scoreStr=score_square.equation
-
+        if(write_flag):
+            write_flag = False
+            scorer.readHighscores()
+            scorer.addScore(int(scoreStr))
+            print(scorer.highscores_array)
+            scorer.writeHighscore()
         drawText(150,350,"Your Score: "+scoreStr)
-        drawText(150,250,"You Ranked: "+"You really suck")
+        drawText(150,250,"You Ranked: "+ str(scorer.highscores_array.index(int(scoreStr))+1))
 
     # test_square.render()
     # test_square.render_text()
@@ -276,25 +306,30 @@ def specialKey (key, x,y):
 
     if(key== GLUT_KEY_F2):
         reset_game_parameters()
+        highscore_square.clear()
         page=0
     
     glutPostRedisplay();
 
 
 def click_abdo(btn,state,x,y):
-    global power_up_flag,page
+    global power_up_flag,page, write_flag
     mouseX,mouseY=0,0
     if(btn==GLUT_LEFT_BUTTON and state==GLUT_DOWN):
         mouseX=x; mouseX= 0.5 + 1.0 *mouseX 
         mouseY=height-y; mouseY= 0.5 + 1.0 *mouseY *1
     
-        if(menuSquare[1].check_click(mouseX,mouseY)):
+        if(menuSquare[1].check_click(mouseX,mouseY) and page == 0):
             page=1
             glutKeyboardFunc(NumKeyboard)
-            glutSpecialFunc(specialKey)
+            
             reset_game_parameters()
 
-        if(menuSquare[3].check_click(mouseX,mouseY)):
+        if(menuSquare[2].check_click(mouseX,mouseY) and page == 0):
+            page = 2
+            init_scoreboard()
+        if(menuSquare[3].check_click(mouseX,mouseY) and page == 0):
+            write_flag = True
             glutDestroyWindow()
 
         if(abdo_square.check_collision(mouseX,mouseY)):
@@ -313,6 +348,7 @@ def render_window():
     wind=glutCreateWindow("OpenGL Coding Practice")
     glutDisplayFunc(showScreen)
     glutIdleFunc(showScreen)
+    glutSpecialFunc(specialKey)
     rung_rectangles_update(0)
     generate_square_timer(0)
     abdo_glide_timer(0)
