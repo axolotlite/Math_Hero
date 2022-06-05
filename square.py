@@ -1,6 +1,7 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
+from random import choice,randint
 import cv2
 import colors
 class Square:
@@ -73,6 +74,8 @@ class ImageSquare(Square):
         self.image = cv2.imread(image_location, cv2_imread_enum)
         # self.image = cv2.rotate(self.image,cv2.cv2.ROTATE_90_COUNTERCLOCKWISE)
         self.render_flag = True
+        self.increment_x = choice([-1,1])
+        self.increment_y = choice([-1,1])
     def toggle_render_flag(self):
         self.render_flag = not self.render_flag
     def display_image(self):
@@ -80,13 +83,50 @@ class ImageSquare(Square):
     def render(self):
         if(self.render_flag):
             glBegin(GL_QUADS)
-            # glColor3f(*self.color)
+            #rgb abdo
+            glColor3f(* choice(colors.rgb))
+            # glColor3f(*colors.teal)
             glVertex2f(self.x - self.half_width, self.y - self.half_height)
-            glTexCoord2f(1.0, 0.0)
-            glVertex2f(self.x + self.half_width, self.y - self.half_height)
-            glTexCoord2f(1.0, 1.0)
-            glVertex2f(self.x + self.half_width, self.y + self.half_height)
             glTexCoord2f(0.0, 0.0)
+            glVertex2f(self.x + self.half_width, self.y - self.half_height)
+            glTexCoord2f(0.0, 1.0)
+            glVertex2f(self.x + self.half_width, self.y + self.half_height)
+            glTexCoord2f(1.0, 0.0)
             glVertex2f(self.x - self.half_width, self.y + self.half_height)
             glTexCoord2f(0.0, 1.0)
             glEnd()
+    def update(self, limitX, limitY):
+        if(self.x >= limitX):
+            self.increment_x = -0.01*limitX
+            if(choice([False,True])):
+                self.increment_x -= (self.increment_x)
+            if(choice([False,True])):
+                self.increment_y = -(self.increment_y)
+        if(self.x <= 0):
+            self.increment_x = +0.01*limitX
+            if(choice([False,True])):
+                self.increment_x += (self.increment_x)
+            if(choice([False,True])):
+                self.increment_y = -(self.increment_y)
+        if(self.y >= limitY):
+            self.increment_y = -0.01*limitY
+            if(choice([False,True])):
+                self.increment_y -= (self.increment_y)
+            if(choice([False,True])):
+                self.increment_x = -(self.increment_x)
+        if(self.y <= 0):
+            self.increment_y = +0.01*limitY
+            if(choice([False,True])):
+                self.increment_y = -(self.increment_y)
+            if(choice([False,True])):
+                self.increment_x = -(self.increment_x)
+        self.x += self.increment_x
+        self.y += self.increment_y
+    def check_collision(self, x, y):
+        min_x,max_x = self.x - self.half_width, self.x + self.half_width
+        min_y,max_y = self.y - self.half_height, self.y + self.half_height
+        if(min_x <= x <= max_x) and (min_y <= y <= max_y):
+            return True
+        return False
+        
+        

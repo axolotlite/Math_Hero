@@ -1,14 +1,15 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-import cv2
+
 import scorer
 import difficulty
 import render_opengl
-from square import Square
+from square import Square, ImageSquare
 
 starting_point_y = -10
 square_spawn_timer = 2000
+abdo_glide_speed = 100
 square_speed = 10
 game_time_limit = 60
 power_up_time_limit = 15
@@ -19,7 +20,7 @@ current_game_score = 0
 
 score_square = Square([0.05*render_opengl.width,0.96*render_opengl.height], 30,20,"0 ")
 timer_square = Square([0.95*render_opengl.width,0.96*render_opengl.height], 30,20,"60 ")
-
+abdo_square = ImageSquare([render_opengl.center_x + 20,render_opengl.center_y - 40],40,40,"abdo_stare.png")
 
 #this isn't working
 def generate_square():
@@ -27,6 +28,9 @@ def generate_square():
 def generate_square_timer(value):
     glutTimerFunc(square_spawn_timer,generate_square_timer,value)
     generate_square()
+def abdo_glide_timer(value):
+    glutTimerFunc(abdo_glide_speed,abdo_glide_timer,value)
+    abdo_square.update(render_opengl.width, render_opengl.height)
 def update_time(value):
     global power_up_time_limit, game_time_limit, power_up_flag, is_game_over
     
@@ -52,7 +56,7 @@ def rung_rectangles_update(value):
 def resize_objects():
     if(render_opengl.init_points()):
         print("resizing_object")
-        for square in [timer_square, score_square, *render_opengl.rung]:
+        for square in [timer_square, score_square, abdo_square, *render_opengl.rung]:
             square.scale_x(render_opengl.scale_factor_x)
             square.scale_y(render_opengl.scale_factor_y)
 def showScreen():
@@ -67,10 +71,11 @@ def showScreen():
     score_square.equation = str(current_game_score)
     score_square.render()
     score_square.render_text()
-    
     timer_square.equation = str(game_time_limit)
     timer_square.render()
     timer_square.render_text()
+    abdo_square.display_image()
+    abdo_square.render()
     # test_square.render()
     # test_square.render_text()
     glutSwapBuffers()
@@ -132,6 +137,16 @@ def specialKey (key, x,y):
         #Menu
     glutPostRedisplay();
 
+def click_abdo(btn,state,x,y):
+    mouseX,mouseY=0,0
+    if(btn==GLUT_LEFT_BUTTON and state==GLUT_DOWN):
+        mouseX=x; mouseX= 0.5 + 1.0 *mouseX *1
+        mouseY=500-y; mouseX= 0.5 + 1.0 *mouseY *1
+        if(abdo_square.check_collision(mouseX,mouseY)):
+            print("CLICKED ABDO NIGGA")
+        # if(mouse cordinate == abdo corrdinate):
+        #     power_up_flag=1
+    
 def render_window():
     glutInit()
     glutInitDisplayMode(GLUT_RGBA)
@@ -141,9 +156,11 @@ def render_window():
     glutDisplayFunc(showScreen)
     glutIdleFunc(showScreen)
     glutKeyboardFunc(NumKeyboard)
+    glutMouseFunc(click_abdo)
     # glutSpecialFunc(specialKey)
     rung_rectangles_update(0)
     generate_square_timer(0)
+    # abdo_glide_timer(0)
     update_time(0)
     glutMainLoop()
     

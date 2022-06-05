@@ -35,6 +35,9 @@ def iterate():
     glClearColor(0,0,0,0.0)
     gluOrtho2D(0.0, width, 0.0, height)
     glMatrixMode (GL_MODELVIEW)
+    glEnable(GL_TEXTURE_2D)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
     glLoadIdentity()
     
 def init_points():
