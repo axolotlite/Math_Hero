@@ -15,7 +15,7 @@ class Square:
         self.equation = equation
         
         self.color = colors.red
-        self.answer = eval(equation[:-1])
+        
     def render_text(self):
         if(self.check_bounds()):
             glColor3f(*colors.white)
@@ -25,6 +25,7 @@ class Square:
             #bug fixed by commenting this out
             # glFlush()
     def validate_answer(self,answer):
+        self.answer = eval(self.equation[:-1])
         if(answer == self.answer):
             print("4atteeeer!")
             self.color = colors.green
@@ -63,6 +64,13 @@ class Square:
         # self.x += x_offset
         self.y += y_offset
         self.text_point_y += y_offset
+    
+    def check_click(self, x, y):
+        min_x,max_x = self.x - self.half_width, self.x + self.half_width
+        min_y,max_y = self.y - self.half_height, self.y + self.half_height
+        if(min_x <= x <= max_x) and (min_y <= y <= max_y):
+                return True
+        return False
 
 class ImageSquare(Square):
     
