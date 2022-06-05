@@ -73,7 +73,7 @@ class ImageSquare(Square):
         self.cv2_imread_enum = cv2_imread_enum
         self.image = cv2.imread(image_location, cv2_imread_enum)
         # self.image = cv2.rotate(self.image,cv2.cv2.ROTATE_90_COUNTERCLOCKWISE)
-        self.render_flag = True
+        self.render_flag = False
         self.increment_x = choice([-1,1])
         self.increment_y = choice([-1,1])
     def toggle_render_flag(self):

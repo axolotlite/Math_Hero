@@ -1,10 +1,10 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-
+import random
 import scorer
 import difficulty
-import render_opengl
+# import render_opengl
 from square import Square, ImageSquare
 import pyautogui
 width, height = 500,500
@@ -84,6 +84,7 @@ abdo_glide_speed = 20
 square_speed = 10
 game_time_limit = 60
 power_up_time_limit = 15
+abdo_appearance_time = random.randint(20,50)
 power_up_flag = False
 is_game_over = False
 ans = ""
@@ -104,7 +105,8 @@ def abdo_glide_timer(value):
     abdo_square.update(width, height)
 def update_time(value):
     global power_up_time_limit, game_time_limit, power_up_flag, is_game_over, score_increment
-    
+    if(abdo_appearance_time == game_time_limit):
+        abdo_square.toggle_render_flag()
     if(power_up_time_limit <= 0):
         power_up_time_limit = 15
         power_up_flag = False
@@ -219,7 +221,6 @@ def click_abdo(btn,state,x,y):
         mouseX=x; mouseX= 0.5 + 1.0 *mouseX
         mouseY=500-y; mouseY= 0.5 + 1.0 *mouseY *1
         if(abdo_square.check_collision(mouseX,mouseY)):
-            print("CLICKED ABDO NIGGA")
             abdo_square.render_flag = False
             power_up_flag=True
     

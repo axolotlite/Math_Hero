@@ -11,18 +11,29 @@ rung = []
 
 def set_difficulty(difficulty):
     #switch cases are only supported in python 3.10
-    match difficulty:
-        case "easy":
+    if difficulty=="easy":
             print("easy diffculty")
             limit = 10
-        case "medium":
+    elif difficulty=="medium":
             print("medium diffculty")
             limit = 100
-        case "hard":
+    elif difficulty=="hard":
             limit = 1000
             print("hard diffculty")
-        case default:
+    else:
             print("default difficulty is easy")
+    # match difficulty:
+    #     case "easy":
+    #         print("easy diffculty")
+    #         limit = 10
+    #     case "medium":
+    #         print("medium diffculty")
+    #         limit = 100
+    #     case "hard":
+    #         limit = 1000
+    #         print("hard diffculty")
+    #     case default:
+    #         print("default difficulty is easy")
 
 
 #functionality can expand with the expansion of difficulty variables
