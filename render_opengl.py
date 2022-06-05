@@ -11,6 +11,8 @@ game_title = "Math Hero: Ascension"
 # Change SPEED to make the game go faster
 playing = True
 SPEED = 10
+scale_factor_x = 1
+scale_factor_y = 1
 
 global_x_offset = 0
 global_y_offset = 0
@@ -27,7 +29,6 @@ center_y = int(height/2)
 rung = []
 
 def iterate():
-    init_points()
     glViewport(0, 0, width, height)
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity()
@@ -37,11 +38,21 @@ def iterate():
     glLoadIdentity()
     
 def init_points():
-    global width, height, center_x, center_y
-    width = glutGet(GLUT_WINDOW_WIDTH)
-    height= glutGet(GLUT_WINDOW_HEIGHT)
-    center_x = width/2
-    center_y = height/2
+    global width, height, center_x, center_y, scale_factor_x, scale_factor_y
+    new_width = glutGet(GLUT_WINDOW_WIDTH)
+    new_height= glutGet(GLUT_WINDOW_HEIGHT)
+    #check if window size has changed
+    if((new_height != height) or (new_width != width)):
+        scale_factor_x = new_width/width
+        scale_factor_y = new_height/height
+        width = new_width
+        height = new_height
+        center_x = width/2
+        center_y = height/2
+        return True
+    scale_factor_x = 1
+    scale_factor_y = 1
+    return False
         
 def render_rung():
     rung_thickness = int(width/100)/2

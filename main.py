@@ -19,25 +19,11 @@ current_game_score = 0
 
 score_square = Square([0.05*render_opengl.width,0.96*render_opengl.height], 30,20,"0 ")
 timer_square = Square([0.95*render_opengl.width,0.96*render_opengl.height], 30,20,"60 ")
-image = cv2.imread("abdo_stare.png", cv2.IMREAD_COLOR)
-cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
-cv2.flip(image, image, 0);
-glGenTextures(1, textureTrash);
-glBindTexture(GL_TEXTURE_2D, textureTrash);
 
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-# Set texture clamping method
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 500,500, 0, GL_RGB, GL_UNSIGNED_BYTE, image)
-cv2.imshow('frame',image)
-glEnable(GL_TEXTURE_2D)
-glutPostRedisplay()
 #this isn't working
 def generate_square():
-    render_opengl.rung.append(Square([render_opengl.center_y, starting_point_y], 40, 20,difficulty.generate_linear_equation(2)[2]))
+    render_opengl.rung.append(Square([render_opengl.center_x, starting_point_y], 40, 20,difficulty.generate_linear_equation(2)[2]))
 def generate_square_timer(value):
     glutTimerFunc(square_spawn_timer,generate_square_timer,value)
     generate_square()
@@ -63,6 +49,12 @@ def rung_rectangles_update(value):
         square.update(render_opengl.global_y_offset_increment)
         square.render
     glutPostRedisplay()
+def resize_objects():
+    if(render_opengl.init_points()):
+        print("resizing_object")
+        for square in [timer_square, score_square, *render_opengl.rung]:
+            square.scale_x(render_opengl.scale_factor_x)
+            square.scale_y(render_opengl.scale_factor_y)
 def showScreen():
     # render_opengl.init_points()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -70,6 +62,7 @@ def showScreen():
     render_opengl.iterate()
     glColor3f(1.0, 0.0, 3.0)
     render_opengl.render_rung()
+    resize_objects()
     render_opengl.render_rung_squares()
     score_square.equation = str(current_game_score)
     score_square.render()

@@ -2,7 +2,6 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 import colors
-
 class Square:
     def __init__(self,center_point,width,height, equation):
         self.x = center_point[0]
@@ -33,7 +32,21 @@ class Square:
         if(self.y - self.half_height - 5 > glutGet(GLUT_WINDOW_HEIGHT)):
             return False
         return True
-    
+    def scale(self, scale_factor):
+        self.x *= scale_factor
+        self.y *= scale_factor
+        self.half_width *= scale_factor
+        self.half_height *= scale_factor
+        self.text_point_x *=  scale_factor
+        self.text_point_y *=  scale_factor
+    def scale_x(self, scale_factor):
+        self.x *= scale_factor
+        # self.half_width *= scale_factor
+        self.text_point_x =  self.x  - 0.5 * self.half_width - 2.4*len(self.equation)
+    def scale_y(self, scale_factor):
+        self.y *= scale_factor
+        # self.half_height *= scale_factor
+        self.text_point_y =  self.y  - 0.5 * self.half_height
     def render(self):
         if (self.check_bounds()):
             glBegin(GL_QUADS)
