@@ -1,6 +1,7 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
+import cv2
 import colors
 class Square:
     def __init__(self,center_point,width,height, equation):
@@ -11,7 +12,7 @@ class Square:
         self.text_point_x =  center_point[0]  - 0.5 * width - 2.4*len(equation)
         self.text_point_y =  center_point[1] - 0.5 * height
         self.equation = equation
-        self.render_flag = True
+        
         self.color = colors.red
         self.answer = eval(equation[:-1])
     def render_text(self):
@@ -32,6 +33,7 @@ class Square:
         if(self.y - self.half_height - 5 > glutGet(GLUT_WINDOW_HEIGHT)):
             return False
         return True
+    #needs to be removed, later
     def scale(self, scale_factor):
         self.x *= scale_factor
         self.y *= scale_factor
@@ -60,3 +62,31 @@ class Square:
         # self.x += x_offset
         self.y += y_offset
         self.text_point_y += y_offset
+
+class ImageSquare(Square):
+    
+    def __init__(self,center_point,width,height, image_location,cv2_imread_enum=cv2.IMREAD_COLOR):
+        Square.__init__(self,center_point,width,height,"0 ")
+        #defaults to cv2.IMREAD_IGNORE_ORIENTATION
+        self.image_location = image_location
+        self.cv2_imread_enum = cv2_imread_enum
+        self.image = cv2.imread(image_location, cv2_imread_enum)
+        # self.image = cv2.rotate(self.image,cv2.cv2.ROTATE_90_COUNTERCLOCKWISE)
+        self.render_flag = True
+    def toggle_render_flag(self):
+        self.render_flag = not self.render_flag
+    def display_image(self):
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 389,573,0,GL_RGB, GL_UNSIGNED_BYTE, self.image)
+    def render(self):
+        if(self.render_flag):
+            glBegin(GL_QUADS)
+            # glColor3f(*self.color)
+            glVertex2f(self.x - self.half_width, self.y - self.half_height)
+            glTexCoord2f(1.0, 0.0)
+            glVertex2f(self.x + self.half_width, self.y - self.half_height)
+            glTexCoord2f(1.0, 1.0)
+            glVertex2f(self.x + self.half_width, self.y + self.half_height)
+            glTexCoord2f(0.0, 0.0)
+            glVertex2f(self.x - self.half_width, self.y + self.half_height)
+            glTexCoord2f(0.0, 1.0)
+            glEnd()
