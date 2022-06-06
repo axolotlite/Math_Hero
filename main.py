@@ -129,11 +129,11 @@ square_spawn_timer = 2000
 abdo_glide_speed = 30
 square_speed = 10
 #resetable
-game_time_limit = 60
+game_time_limit = 5000
 power_up_time_limit = 15
 abdo_appearance_time = random.randint(20,50)
 power_up_flag = False
-is_game_over = False
+is_game_over = True
 ans = ""
 current_game_score = 0
 
@@ -174,7 +174,7 @@ def update_time(value):
     if(power_up_time_limit <= 0):
         power_up_time_limit = 15
         power_up_flag = False
-    if(game_time_limit <= 0):
+    if(game_time_limit <= 0 and page==1):
         game_time_limit = 60
         is_game_over = True
         page=4
@@ -271,36 +271,37 @@ def validate_solutions(solution):
 def NumKeyboard(key, x , y):
     global ans
     key= str(key.decode(encoding='UTF-8',errors='strict'))
-    if(key == '\b'):
-        ans = ans[:-1]
-    if(key == '-'):
-        ans+= key
-    if(key == "0" ):
-        ans+=key
-    if(key == "1" ):
-        ans+=key
-    if(key == "2" ):
-        ans+=key
-    if(key == "3" ):
-        ans+=key
-    if(key == "4" ):
-        ans+=key
-    if(key == "5" ):
-        ans+=key
-    if(key == "6" ):
-        ans+=key
-    if(key == "7" ):
-        ans+=key
-    if(key == "8" ):
-        ans+=key
-    if(key == "9" ):
-        ans+=key
-    if(key == "\r"):
-        if(ans != ""):
-            ans = int(ans)
-            print(ans)
-            validate_solutions(ans)
-            ans = ""
+    if(page==1):
+        if(key == '\b'):
+            ans = ans[:-1]
+        if(key == '-'):
+            ans+= key
+        if(key == "0" ):
+            ans+=key
+        if(key == "1" ):
+            ans+=key
+        if(key == "2" ):
+            ans+=key
+        if(key == "3" ):
+            ans+=key
+        if(key == "4" ):
+            ans+=key
+        if(key == "5" ):
+            ans+=key
+        if(key == "6" ):
+            ans+=key
+        if(key == "7" ):
+            ans+=key
+        if(key == "8" ):
+            ans+=key
+        if(key == "9" ):
+            ans+=key
+        if(key == "\r"):
+            if(ans != ""):
+                ans = int(ans)
+                print(ans)
+                validate_solutions(ans)
+                ans = ""
         
 def specialKey (key, x,y):
     global page
