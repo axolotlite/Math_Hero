@@ -4,23 +4,37 @@ import random
 
 #the limit for random
 limit = 10
-operator_array = ['-','+','*','/']
-def set_difficulty(difficulty):
-    #switch cases are only supported in python 3.10
-    match difficulty:
-        case "easy":
-            print("easy diffculty")
-            limit = 10
-        case "medium":
-            print("medium diffculty")
-            limit = 100
-        case "hard":
-            limit = 1000
-            print("hard diffculty")
-        case default:
-            print("default difficulty is easy")
+score = 0
+operator_array = ['-','+','*']
 #contains all equations 
 rung = []
+
+def set_difficulty(difficulty):
+    #switch cases are only supported in python 3.10
+    if difficulty=="easy":
+            print("easy diffculty")
+            limit = 10
+    elif difficulty=="medium":
+            print("medium diffculty")
+            limit = 100
+    elif difficulty=="hard":
+            limit = 1000
+            print("hard diffculty")
+    else:
+            print("default difficulty is easy")
+    # match difficulty:
+    #     case "easy":
+    #         print("easy diffculty")
+    #         limit = 10
+    #     case "medium":
+    #         print("medium diffculty")
+    #         limit = 100
+    #     case "hard":
+    #         limit = 1000
+    #         print("hard diffculty")
+    #     case default:
+    #         print("default difficulty is easy")
+
 
 #functionality can expand with the expansion of difficulty variables
 def generate_linear_equation(variable_number):
@@ -48,31 +62,3 @@ def generate_linear_equation(variable_number):
     #turn the last operator into '=' operator
     local_operator_array[-1] = '='
     return [variable_array, local_operator_array, linear_equation_string]
-
-def populate_rung(equation_number):
-    for equation in range(equation_number):
-        #populate the rung with the equation string 
-        rung.append(generate_linear_equation(2)[2])
-    print(rung)
-def append_rung():
-    rung.append(generate_linear_equation(2)[2])
-    
-def validate_solution(solution,rung_square=-1):
-    #check if the answer is for all the rung values
-    if(rung_square == -1):
-        #iterators through each equation
-        for equation in rung:
-            #prepares the answer
-            answer = eval(equation[:-1])
-            # print(answer)
-            #if the answer is similar to the solution it prints so
-            if(answer == solution):
-                print(equation + " " + str(solution) + " is correct")
-                return True
-        #if the answer is not present in the rung array, then it's wrong
-        print("wrong")
-        return False
-    else:
-        answer = eval(rung[rung_square][:-1])
-        print(answer)
-    # if(answer == solution )
