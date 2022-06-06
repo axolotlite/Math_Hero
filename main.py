@@ -7,8 +7,11 @@ import scorer
 import difficulty
 import colors
 import sys
+import inflect
+
 
 window={}
+p = inflect.engine()
 # import render_opengl
 from square import Square, ImageSquare
 import pyautogui
@@ -253,7 +256,7 @@ def showScreen():
             print(scorer.highscores_array)
             scorer.writeHighscore()
         drawText(150,350,"Your Score: "+scoreStr)
-        drawText(150,250,"You Ranked: "+ str(scorer.highscores_array.index(int(scoreStr))+1))
+        drawText(150,250,"You Ranked: "+ p.ordinal(scorer.highscores_array.index(int(scoreStr))+1))
 
     # test_square.render()
     # test_square.render_text()
