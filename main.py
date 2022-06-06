@@ -8,6 +8,7 @@ import difficulty
 import colors
 import sys
 
+window={}
 # import render_opengl
 from square import Square, ImageSquare
 import pyautogui
@@ -32,7 +33,7 @@ global_y_offset_increment = 1
 center_x = int(width/2)
 center_y = int(height/2)
 
-score_increment = 100
+score_increment = 1
 
 
 menuSquare={}
@@ -141,7 +142,7 @@ def reset_game_parameters():
     global rung, game_time_limit, power_up_time_limit, abdo_appearance_time, power_up_flag, is_game_over, ans, current_game_score, write_flag
     write_flag = True
     rung.clear()
-    game_time_limit = 10
+    game_time_limit = 60
     power_up_time_limit = 15
     abdo_appearance_time = random.randint(20,50)
     abdo_square.render_flag = False
@@ -163,7 +164,7 @@ def abdo_glide_timer(value):
     abdo_square.update(width, height)
 def update_time(value):
     global power_up_time_limit, game_time_limit, power_up_flag, is_game_over, score_increment,page
-    print(game_time_limit)
+    #print(game_time_limit)
     if(abdo_appearance_time == game_time_limit):
         print("godddamn it")
         abdo_square.render_flag = True
@@ -176,7 +177,7 @@ def update_time(value):
         page=4
     if(not power_up_flag):
         # print("normal time")
-        score_increment = 100
+        score_increment = 1
         glutTimerFunc(1000,update_time,value)
         game_time_limit -= 1
     else:
@@ -313,7 +314,7 @@ def specialKey (key, x,y):
 
 
 def click_abdo(btn,state,x,y):
-    global power_up_flag,page, write_flag
+    global power_up_flag,page, write_flag,window
     mouseX,mouseY=0,0
     if(btn==GLUT_LEFT_BUTTON and state==GLUT_DOWN):
         mouseX=x; mouseX= 0.5 + 1.0 *mouseX 
@@ -330,7 +331,9 @@ def click_abdo(btn,state,x,y):
             init_scoreboard()
         if(menuSquare[3].check_click(mouseX,mouseY) and page == 0):
             write_flag = True
-            glutDestroyWindow()
+            #glutDestroyWindow(window)
+            glutLeaveMainLoop()
+            #exit()
 
         if(abdo_square.check_collision(mouseX,mouseY)):
             abdo_square.render_flag = False
@@ -341,11 +344,12 @@ def click_abdo(btn,state,x,y):
 
 
 def render_window():
+    global window
     glutInit()
     glutInitDisplayMode(GLUT_RGBA)
     glutInitWindowSize(width, height)
     glutInitWindowPosition(0, 0)
-    wind=glutCreateWindow("OpenGL Coding Practice")
+    window=glutCreateWindow("OpenGL Coding Practice")
     glutDisplayFunc(showScreen)
     glutIdleFunc(showScreen)
     glutSpecialFunc(specialKey)
